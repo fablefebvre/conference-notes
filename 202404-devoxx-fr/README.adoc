@@ -1,0 +1,1247 @@
+= Devoxx France 2024
+Fabrice LEFEBVRE <icon:github[] https://github.com/fablefebvre/[GitHub]
+// Handling GitHub admonition blocks icons
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+:imagesdir: ./images
+:source-highlighter: highlightjs
+:highlightjs-languages: asciidoc
+// We must enable experimental attribute to display Keyboard, button, and menu macros
+:experimental:
+// Next 2 ones are to handle line breaks in some particular elements (list, footnotes, etc.)
+:lb: pass:[<br> +]
+:sb: pass:[<br>]
+// check https://github.com/Ardemius/personal-wiki/wiki/AsciiDoctor-tips for tips on table of content in GitHub
+:toc: macro
+:toclevels: 2
+// To number the sections of the table of contents
+//:sectnums:
+// Add an anchor with hyperlink before the section title
+:sectanchors:
+// To turn off figure caption labels and numbers
+:figure-caption!:
+// Same for examples
+//:example-caption!:
+// To turn off ALL captions
+// :caption:
+
+toc::[]
+
+== MERCREDI
+
+=== Présentation du salon
+
+=== 10h30 - 11h15 (Amphi bleu) : Instrumenter vos applications natives Spring Boot et Quarkus avec OpenTelemetry
+
+==== Abstract
+
+.Speakers : 
+--
+*SANDRA AHLGRIMM* (Microsoft):
+Sandra Ahlgrimm est développeuse cloud senior à Microsoft spécialisée en Java. Elle s'intéresse particulièrement à la fluidité de l'expérience du développeur lors du déploiement de leur charge de travail Java sur Azure, avec des machines virtuelles, App Service, AKS, Azure Spring Apps, Azure Functions ou Azure Container Apps.
+Sandra et son équipe, les Advocates Java, travaillent en étroite collaboration avec les équipes produit et les développeurs pour s’assurer que les services Azure sont testés et optimisés pour répondre aux besoins des développeurs. Ils sensibilisent et informent également la communauté sur les fonctionnalités de ces services.
+
+*BRUNO BAPTISTA* (Red Hat):
+Ingénieur Principal chez Red Hat travaillant avec des sujets d'observabilité au sein de l'équipe Quarkus. Avec plus de 15 ans d'expérience en tant qu'ingénieur d'entreprise, Bruno a travaillé comme architecte de systèmes, dirigé des équipes d'assurance de qualité et de développement et acquis des compétences en analyse des exigences et en processus de développement.
+Au cours de son parcours professionnel, il a contribué à des projets open source comme OpenTelemetry, Quarkus, Apache TomEE et Eclipse MicroProfile. Il continue également de contribuer à l'organisation du Coimbra Java Users Group (JUG) et de la conférence JNation au Portugal.
+
+*JEAN BISUTTI* (Microsoft):
+Jean travaille à Microsoft dans l'équipe produit Application Insights (Azure monitor). Approver sur le projet OpenTelemetry Java instrumentation, il est aussi le créateur du projet open source QuickPerf et a été nommé Java Champion.
+--
+
+----
+Vous avez développé votre première application native GraalVM. Vous bénéficier maintenant d'un démarrage rapide et d'une faible utilisation des ressources. Mais comment être sûre que votre application fonctionne correctement, sans erreur et sans requêtes SQL lentes ?
+Comment instrumenter et observer vos applications natives Spring Boot et Quarkus avec OpenTelemetry ?
+Rejoignez-nous à cette session mêlant explications et live coding où nous répondrons à cette question !
+----
+
+==== Notes
+
+Opentelemetry CNCF (Java, javascript, Go, Rust, ...)
+Spec avec plusieurs implem
+image:xxx
+Github projects:
+- opentelemety-specifications
+- opentelemety-java: implem java
+- opentelemety-java-instrumentation: starter spring
+- same conf JVM/native but less than an agent
+
+GraalVM: 
+- compilation image native. 
+- possibilité d'ajouter des profils au runtime. 
+- pas de compilateur JIT C2 a l'exec.
+- same conf JVM/native
+
+agent java non supporté officiellement pour les images native (PR en cours).
+
+Azure applications insights == opentelemety microsoft implementation that will receive opentelemtry data
+
+compile native app with maven then run with alpine (ligth distro)
+
+overhead négligeable (cad ?! ^^)
+
+---- Spring
+use starter spring boot
+Driver jdbc specific opentelemety + specific db url to add tracing
++starter Azure deps avec jar signé (mais besoin de désactivé la signature des jars sinon app native ko)
+
+---- Quarkus
+- most at build time
+- fast startup + less memory footprint
+- if refelction need special work
+- setup: add opentelemety dep + conf in application.properties
+
+possibilité de tracer les appels entre spring boot native et quarkus native
+
+Spring boot future:
+- start spring boot GA in few months
+- instrumentation without conf
+
+Quarkus future:
+- usable in dev-mode
+
+A terme tous les providers vont supporter le protocole OTLP. 
+Pour avoir les foncitonnalités spécifiques il faudra utiliser les deps speécifique du provider.
+
+Telemetry available for Spring boot and Quarkus native apps
+
+=== 11h35 - 12h20 (153) : Going AOT: Everything you need to know about GraalVM for Java applications
+
+==== Abstract
+
+.Speakers : 
+--
+*ALINA YURENKO* : Alina is a developer advocate for GraalVM at Oracle Labs, a research & development organization at Oracle. Loves both programming & natural languages, compilers, and open source.* : TODO
+--
+
+----
+In the past few years GraalVM got widely adopted in the Java ecosystem, and now it's hard to imagine starting a new project, especially for the cloud, without at least considering going native. However, taking a new technology to production requires research and preparation. What is the best way to build and deploy such native executables? Once deployed, how can I monitor them? Can I test them as I do with regular Java applications? How do I optimize for peak performance and latency? How do I use frameworks and libraries?
+This session will cover all of those steps and illustrate them with examples. 
+----
+
+==== Notes
+
+GraalVM: JDK (JIT) + native (AOT)
+GA since 5 years
+check Everything used to keep only needed to create executable
+heap analysed at statup to start faster
+Native app frameworks: mirconaut, quarkus, spring, helidon...
+Fast start, lower resource usage, predictable/perf, improved security, compact packaging
+flat performance vs JVM apps (need warmup) no warmup needed -> faster
+compilation longer
+start faster 43ms(native) vs 1s(JVM)
+memory usage 10x less
+to know ready for GraalVM deps: https://www.graalvm.org/native-image/libraries-and-frameworks/
+extra effort for refelction for instance (might need json conf files)
+provided sometimes by deps directly:
+https://github.com/oracle/graalvm-reachability-metadata/tree/master/metadata
+tracing agent on JVM to output the json config files
+otherwise manually but hopefully not...
+JUnit: @EnabledinNativeImage vs @DisabledinNativeImage
+JIT vs AOT perf:
+peak throughput almost equals JVM vs Native
+Memory efficiency: more throughput per memory (2x) for native
+
+Pros/cons:
+Native image size lighter
+Need build for each platforms (windows, linux, mac...)
+Reduce attack surface (remove Everything not needed in native apps)
+No JIT compiler attack
+image:xxx
+
+Tips:
+Use GraalVM as JVM, then build native
+Use CI/CD to build for all platforms
+ML enabled analyze app to make it faster
+G1 GC: most efficient
+
+Future:
+Faster always (GraalVM 22 is the fastest)
+layered native images: avoid recompile things that don't change (eg spring boot, mirconaut, ...)
+
+=== 11h35 - 12h20 (153) : Révolutionnez votre expérience utilisateur avec les Progressive Web Apps
+
+==== Abstract
+
+.Speakers : 
+--
+*KHADIJA ABDELOUALI (Ippon)* : Khadija est une **développeuse Full-Stack** chez **IPPON Technologies**. Elle est passionnée par tout ce qui est nouvelles technologies et solutions algorithmiques 💻.
+Assoiffée d’**apprendre** et surtout de **partager** ses connaissances et découvertes, elle adore **échanger** afin de faire de l’informatique une belle aventure et inspirer les autres à explorer les possibilités infinies de ce domaine en constante évolution 🚀.
+--
+
+----
+Révolutionner le monde du web en créant une nouvelle génération d’applications « progressives » et proposer une alternative aux applications natives 📱 avec une seule et unique base de code : tel est l’enjeu des PWAs.
+Entre l’essor du mobile et l’envol des OS divers et variés, les coûts de développement pour chaque plateforme 💶, la consommation des ressources ainsi que la procédure de validation sur les différents app stores deviennent des challenges primordiaux auxquels il faut apporter une réponse de toute urgence🚨.
+La solution « Progressive Web App » apparut ainsi pour la première fois en 2015 et a depuis été largement adoptée par Starbucks, Pinterest, Uber, …
+Alors, le pari des PWAs a-t-il été remporté 🏆?
+📢 Pour le savoir, ne manquez surtout pas cette conférence, où nous plongerons dans les fondamentaux de cette technologie révolutionnaire et découvrirons également comment les PWAs combinent le meilleur des sites web 🌐 et des applications mobiles 📱, afin d'offrir une expérience utilisateur sans précédent 👨‍💻.
+----
+
+==== Notes
+
+2007 Steve Jobs give the definition
+PWA 2015 (Google)
+Avantage: 
+- compat win,mac,linux et android,iOS
+- moins couteux: moins de code (une seule codebase)
+- easy distribution: no need to use stores
+- dev java/angular plus facile a trouver que Swift
+- mobile first
+- easy update
+- Starbucks: 99.84% smaller native iOS vs PWA ! 
+- service worker en js en background intercept request front/back stored in a cache
+- if no network cache can be used
+- manifest json -> banner installation -> APK installed
+- from html to PWA -> add manifest + service worker
+- from framework JS with provided manifest
+- Lighthouse audit to score your PWA
+- si site web -> PWA sinon si nécessaire matériel spécifique tél -> native
+
+=== 13h - 13h15 (153) : Passer d'une application Flutter mobile à une application Web de production en 2 mois, c'est possible !
+
+==== Abstract
+
+.Speakers : 
+--
+*MICHAËL OHAYON (public sapient)* : Michael a rejoint l'aventure du développement sur smartphone en 2009, lors de la sortie des premiers appareils Android.
+Il s'est ensuite spécialisé dans le développement d'applications mobiles et a appliqué son travail pour plusieurs types d'appareils, notamment les téléphones, les tablettes, les téléviseurs, les montres et même les robots humanoïdes.
+Il est passé à Flutter pour continuer à appliquer ses valeurs lors de la création d'applications mobiles, qui incluent la performance, la qualité, une bonne expérience utilisateur et du fun.
+--
+
+----
+Notre toute nouvelle application mobile Flutter Edenred+ (Android et iOS) est sortie 🎉
+Nous vous proposons un retour sur nos reflexions et travaux qui nous ont amené à utiliser Flutter pour le passage de notre produit au Web afin de conserver nos parcours et fonctionnalités déjà validés et utilisés par nos utilisateurs mobiles.
+Nous reviendrons aussi sur les difficultés, risques et limitations du passage de Flutter Mobile à Flutter Web pour que vous puissiez savoir si vous aussi vous devriez passer le pas.
+----
+
+==== Notes
+
+Pourquoi ? user ne veulent pas installer l'app -> faire un site pour garder le parcours client avec le même principe que l'app
+2 options: Angular ou flutter web
+-> flutter web pour ne pas repartir de 0
+quite easy: 
+- build web instead of mobile
+- build time about 2min
+- app start but not optimized
+- packages used are compatible
+- only issues are web issues like other front frameworks like cours
+- in prod in 2 months
+- look like the app version but usable
+- then adapt styles
+- Problems: 
+    - runtime error with some call
+    - some sdks are not flutter ready
+- Solution: create the missing bindings
+- key management: obfuscation
+- check web packages respect security concerns
+- statics no issues just config CORS
+- Routing: check reload, acces direct URL to pages
+
+Good experience
+
+=== 13h30 - 16h30 (251) : Cloud Native apps with Micronaut 4 and GraalVM
+
+==== Abstract
+
+.Speakers : 
+--
+*CÉDRIC CHAMPEAU (Oracle)* : Cédric Champeau est développeur Java chez Oracle Labs, dans l’équipe Micronaut et GraalVM. Il travaille notamment sur les problématiques d’optimisation de la productivité développeur (aussi bien interne que pour les utilisateurs de Micronaut) et maintient notamment les plugins Gradle et Maven de Micronaut et de GraalVM native-image. Avant celà, Cédric a passé plusieurs années à travailler chez Gradle Inc sur l’outil de build open source Gradle, où il a notamment contribué à de nombreuses améliorations en termes de performance, gestion des dépendances et sécurité. Enfin, Cédric a longtemps été un des contributeurs principaux du langage Groovy, pour lequel il a notamment développé le compilateur statique et des outils d’optimisations à compile time (AST transformations).
+*GRAEME ROCHER (Oracle)* : Graeme Rocher is the creator of several popular Open Source projects including Grails (https://grails.org) and Micronaut (https://Micronaut.io) and co-author of "The Definitive Guide to Grails" (Springer - https://link.springer.com/book/10.1007/978-1-4302-0871-6).
+Graeme currently works as an Architect at Oracle Labs. Graeme in 2018 was awarded the Groundbreaker award by Oracle (https://developer.oracle.com/groundbreakers) for his work on Open Source.
+--
+
+----
+The Micronaut® Framework is a cloud native, serverless, native, microservices and even CLI application development framework for Java developers. It has been designed with the idea of doing as much as possible at build time (AOT) to provide a better development experience with fast feedback, applications which are memory efficient and start up faster. With its tight integration with GraalVM, it's a framework of choice for deployment on multiple clouds and performance optimization.
+In this session, we will cover the basics of Micronaut such as the programming model, dependency injection, AOP or testing, but will also cover more advanced topics like Micronaut Data for the data access layer, declarative HTTP clients and OpenAPI integration for fast, compile-time declarative programming, Micronaut Test Resources to simplify test environment setup, creation of native applications with GraalVM and more!
+This session will be held by Graeme Rocher, creator of the framework, also author of the Grails framework, and Cédric Champeau, developer of Micronaut AOT and Micronaut Test Resources. Both of them work at Oracle Labs on the Micronaut Framework.
+The session will be held in English but Cédric will offer assistance in French to whoever needs it.
+----
+
+==== Notes
+
+Why micronaut ?
+- slow reflections (full read of class when using reflection)
+- increase memory usage
+- classpath scanning to check annotations
+- dynamic class loading (could take sometimes)
+- hibernate use reflection cache also, jackson does too, lot of cache...
+
+Main goal: avoid reflection !
+
+Micronaut objectives:
+- serverless/microservices
+- http client/server based on netty
+- java annotation compute at compile time
+- increase dev productivity
+- opensource Apache 2 licence
+
+Solutions: 
+- Limit annotation API with AnnotationMetadata
+- Limit type erasure with precomputed Argument interface
+- Eliminate reflections
+- no refletive data cache
+- no classpath scanning
+- no dynamic classloading
+
+objective: smaller, leaner runtime
+
+GraalVM: JIT(JVM mode) or AOT(native mode)
+
+Micronaut works great with GraalVM: static analysis is easy as we are not using reflections
+2 ways to create native apps:
+- Create an app without reflection: app is the same as JVM
+- compute relfection caches AOT
+
+Start with https://micronaut.io/launch/ (can be used in IntelliJ like Spring Initializr or Quarkus) or command line
+- choose features to add: jdbc, openapi, ...
+- JDK, build tool, Test framework...
+
+@MicronautTest: start micronaut before tests allows to @inject
+application.properties: to config your app
+
+Micronaut 4
+JDK 17, updates for JDK 21/22
+GraalVM improvements
+Perf & mem improvements (small overhead on top of Netty)
+
+Tracing agent on if you want to know deps that are using reflection.
+In your code avoid using @Inject private fields.
+
+plugins library, application, ...
+dependencies can added using a catalog (prefix deps with mn (stands for micronaut)) -> type safe (avoid use of strings)
+run: just start the app
+for hot code reload: run with -t
+@Value: inject conf value from application.properties or default value
+static resources can be set in application.properties
+@Client on interface to create HTTP client then @POST on the method with parameters...
+@Client annotated interface can be injected as a parameter in test methods
+nativeRun to run native
+nativeTest to run test in native version to check there are no diff with JVM version
+dockerBuildNative: create docker image for first generate native image from graalvm docker image
+graalvm metadata from deps are excluded by default to avoid conflicts
+nativeOptimizedRun
+
+aot module in build.gradle : 
+- allows to optimize service loading, conert yaml to java, ...
+- must be done on prod environment (it will differ on dev env if there are not the same)
+
+Dev startup/java statup quite the same (Spring/Quarkus start slowly in dev mode)
+Micronaut is faster
+Memory usage: 1) Quarkus (52MB) 2) Micronaut (66MB) 3) Spring boot (80MB)
+https://micronaut-projects.github.io/micronaut-data/latest/guide/
+
+more modular (less required deps)
+
+add scope on your component like @Singleton then can be injected in @Test as a parameter
+@ConfigurationProperties on a record: fetch property from application.properties for all subproperties example person.*
+@Named("Fred") when injecting the record will fecth values under person.fred.*
+@Inject Map<String, Bean>
+Support of jakarta.validation.* (modular means optional)
+Support for Scheduling, EL
+
+Micronaut Data like Spring Data (JDBC, JPA, MongoDB)
+Difference Spring Data at runtime takes times reflections, proxies, ...
+Micronaut at compilation time to be faster
+@JdbcRepository annotated interface extends CrudRepository can be @Inject
+@Query to write SQL querries checked at compile time (completion in IntelliJ ultimate)
+test-resources allows magic when property is missing, it auto add them (weird ?!)
+@Serdeable needed but not directly on entity record: prefer creating a DTO record.
+Auto convert to DTO if proeprties match entities fields
+you can let test resources running such as postgres to avoid startup each time
+Tests are executed in transaction rolled back at the end of the test to avoid persisting data that may impact other tests.
+
+image:xxx
+
+@MqttPublisher/@MqttSubscriber/@Topic: to deal with queue messaging
+test-resources: you can add test containers
+
+Improvements:
+Deals with virtual threads: blocking in overall config or on method
+HTTP/3 support: UDP instead of TCP
+Context Propagation (MDC)
+OpenAPI spec from java sources or reverse java from spec
+GCN: GraalVM Cloud Native support of AWS, Azure, GCP, Oracle cloud
+
+=== 17h - 17h30 (242AB) : Picocli : mets du Java dans ton terminal !
+
+==== Abstract
+
+.Speakers : 
+--
+*STÉPHANE PHILIPPART (OVHCloud)* : Développeur un jour, développeur toujours !
+Développeur Java depuis de nombreuses d'années, j'ai la joie de connaître le JDK 1.1, JEE, Struts, ... et maintenant Spring, Quarkus, Angular, Groovy, Golang, ...
+Durant plus d'une dizaine d'années j'ai été Architecte Logiciel, métier qui m'a permis de me confronter à de nombreuses problématiques inhérentes aux systèmes d'information toujours complexes dans les grands groupes.
+J'ai eu aussi d'autres vies, notamment dans l'automatisation et la livraison avec la mise place de chaînes de CI/CD basées sur les pipelines as code de Jenkins.
+Aimant particulièrement le partage et les relations avec les développeurs je suis devenu DevRel au sein d'OVHcloud. Cette nouvelle aventure me permet de continuer à être au milieu de technologies que j'affectionne comme Kubernetes par exemple mais aussi de continuer à apprendre et découvrir énormément de nouvelles choses.
+J'ai, notamment, découvert le monde passionnant de l'intelligence artificielle et plus particulièrement du machine learning.
+Tout en gardant à l'esprit une de mes principales motivation en tant que DevRel : rendre les développeuses et développeurs heureux.
+Toujours dans le partage, je suis le co-créateur du Meetup TADx à Tours, permettant la découverte et partage autour de différents sujets de la tech.
+--
+
+----
+Les CLI (Command Line Interface), tout le monde les utilise et elles existent depuis la nuit des temps. Souvent synonymes de gain de productivité, leur création est parfois obscure et peut sembler complexe. C'était le cas il y a quelques décennies, mais depuis quelques années, des langages et Frameworks permettent d'en écrire simplement dans votre langage préféré.
+Je vous propose d'utiliser un langage qui ne paraît pas, au premier abord, le plus intuitif pour faire une CLI : Java !
+Mais il sera bien accompagné dans cette tâche : grâce à Picocli et Quarkus, notre CLI aura tout d'une grande, tout en étant simple à développer ! Et cerise sur le gâteau : nous créerons un "vrai" exécutable grâce à Graal VM.
+Venez m'accompagner lors d'une session de live coding permettant de mettre en lumière comment créer une CLI en Java avec Picocli et Quarkus en partant de zéro !
+----
+
+==== Notes
+
+With Quarkus:
+quarkus create cli
+Picocli come with quarkus-picoli extension
+@Command(name="macommande")
+@Parameters/@Option also handle --help
+Implements Callable<Integer> to manage return code
+
+== JEUDI
+
+=== 9h - 9h30 (Amphi bleu) : Programming’s Greatest Mistakes
+
+==== Abstract
+
+.Speakers : 
+--
+*MARK RENDLE* : Mark is the founder of RendleLabs, which provides consulting services and workshops to .NET development teams across all industries. His particular obsessions are API design and development, performance, Observability and code-base modernisation. He also uses skills acquired during a few years as a professional stand-up comic to deliver entertaining and informative talks at conferences around the world, and recently learned to play bass so he could join tech parody band The LineBreakers.
+--
+
+----
+Most of the time when we make mistakes in our code, a message gets displayed wrong or an invoice doesn’t get sent. But sometimes when people make mistakes in code, things literally explode, or bankrupt companies, or make web development a living hell for millions of programmers for years to come.
+ 
+Join Mark on a tour through some of the worst mistakes in the history of programming. Learn what went wrong, why it went wrong, how much it cost, and how things can be pretty funny when they’re not happening to you.
+----
+
+==== Notes
+
+Y2K: expensive price of the data in 60's -> optimized on 2 digits
+Y2K22: start integer with 22 fails
+Dog38: 37 ok 38 fails. Roman numerals -> 6 chars fails
+floating point unit: pentium fpu bug in decimal not always the same result. cost a lot to fix (ship new cpu)
+null: 1.000.000$
+bugs in space: hard to fix (can not set breakpoint)
+mariner one bug: forgoet hyphen on R -> explode by NASA
+pound for seconds vs newton-seconds: trajectory differs. As american weird date. they thinki they must be different.
+Ariane 5: copy paste Ariane 4 16 bits code in 64 bits -> explode ! 500.000.000$
+
+=== 9h35 - 10h (Amphi bleu) : Un monde shooté aux métaux
+
+==== Abstract
+
+.Speakers : 
+--
+*GUILLAUME PITRON (Psyché-16)* : Éminent journaliste, auteur et réalisateur français basé à Paris, Guillaume Pitron est reconnu pour ses essais perspicaces sur les impacts cachés des transitions énergétique et numérique. Parmi ses œuvres notables figurent "La Guerre des métaux rares" et "L’Enfer numérique", tous deux traduits en plusieurs langues et salués par de nombreux prix. La carrière de Pitron s'étend à de nombreuses collaborations médiatiques et contributions à des publications majeures telles que Le Monde diplomatique et National Geographic, démontrant son expertise sur les défis économiques, géopolitiques et environnementaux posés par les avancées technologiques. Son journalisme d'investigation, couvrant plus d'une centaine de reportages dans de nombreux pays, explore des questions critiques comme l'extraction des terres rares et les implications de l'agriculture robotisée. L'engagement de Pitron auprès d'institutions internationales et de plateformes médiatiques, ainsi que ses affiliations académiques et reconnaissances, soulignent son rôle de voix clé dans les discussions sur la durabilité, la souveraineté technologique et l'avenir de notre planète.
+*AGNES CREPET (Fairphone/Ninja Squad)* : Agnès Crepet est responsable de la longévité logicielle et de l'informatique chez Fairphone, une entreprise sociale créant un smartphone éthique, modulaire et réparable. Elle a cofondé Ninja Squad en France qui utilise et promeut l'Open Source et publie des livres informatiques à prix libre. Elle est également activement impliquée dans différentes communautés. Elle a cofondé MiXiT, un événement Tech annuel en France depuis 2011 qui travaille pour plus de diversité et d'éthique dans la Tech. Elle est également dans le board de Duchess France depuis 2010 qui rend les femmes dans l'informatique plus visibles.
+https://ninja-squad.fr/
+http://fairphone.com/
+http://mixitconf.org/
+https://www.duchess-france.org/
+--
+
+----
+Dans cette conférence intitulée "Un monde shooté aux métaux", Guillaume Pitron, expert des enjeux géopolitiques liés aux ressources naturelles, et Agnes Crepet, spécialiste en technologies éco-responsables, s'unissent pour aborder la dépendance croissante de nos sociétés aux métaux rares et ses implications profondes. Ils exploreront comment cette consommation excessive impacte l'environnement, l'économie mondiale et les relations sociales, en dévoilant les chaînes d'approvisionnement complexes qui relient les mines isolées aux technologies quotidiennes. La discussion soulignera les conséquences environnementales de l'extraction des métaux, les défis éthiques et les tensions géopolitiques qu'elle engendre.
+----
+
+==== Notes
+image:xxx
+
+50/60/70 méteaux différents dans un smartphone
+eau/élec/... nécessaire pour fabriquer ces smartphone
+1200/1: ratio de quantité de matiere pour construire ce smartphone
+2020->2050: 70000 fois plus que ce qu'on consommait jusque la
+Indium: nécessaire pour rendre les téléphones tactiles
+idées: recyclage utopiste indium ne sera pas récupéré. substitution lithium par sodium.
+mines en europe mais ensentiellement en afrique, asie, ... industrie finance la guerre en République du Congo RDC (mine de cobalte 70% de la prod mondiale).
+Ouverture de mine de lithium dans l'Allier.
+Allongement de la durée de vie des appareils: obligation de mise à jour min 5 ans
+devoir de vigilance: réglementation. galium/germanium vient de Chine (risqe d'arrêt exportation guerre commercial). Remonter de la chaine de valeur pr calculer les risques ESG. connaitre sa chaine d'appro. risque de ne plus avoir d'appro. trouver d'autre appro.
+data: peut aider à prévoir les fluctuation de marché
+Fairphone: 23 méteaux.
+iPhone prix des matériaux : 2/3€ 
+cloud/IA implique mines
+
+=== 10h30 - 11h15 (151) : Rendez-moi mon front !
+
+==== Abstract
+
+.Speakers : 
+--
+*OLIVIER THIERRY (ASI)* : Je suis expert technique chez ASI et compte derrière moi plus de 25 ans de développement. Après avoir commencé en Visual Basic, fait un peu de PHP et beaucoup de Java, je me suis tourné vers l'écosystème Javascript depuis une dizaine d'années. J'interviens sur des projets d'applications mobiles (Ionic, React Native), d'applications et sites web (React JS, Next.js) et de plateformes API (Node.js, NestJS). J'ai une appétence particulière pour l'écosystème React.
+En tant qu'expert technique chez ASI, mon rôle est d'imaginer les solutions techniques pour résoudre les problèmes de nos clients, d'accompagner les développeurs pendant la réalisation des projets et d'assurer la qualité de nos réalisations. Je contribue également à l'animation de notre communauté technique. Je suis par ailleurs membre de l'équipe d'organisation du meetup React Nantes.
+Ce qui me motive chaque jour : travailler en équipe et voir chacun d'entre nous évoluer et progresser, techniquement mais aussi humainement !
+
+--
+
+----
+Rendu côté client (CSR), rendu côté serveur (SSR), génération de sites statiques (SSG), regénération statique incrémentale (ISR), architecture en îlots, composants serveurs, … Difficile de se retrouver dans les modes de rendu proposés aujourd'hui par les différents écosystèmes front modernes.
+
+Quels sont les principes de ces modes de rendu ? À quelles problématiques répondent-t-ils ? Quels sont leurs atouts et leurs limites en terme de performance, d'expérience utilisateur, d'expérience développeur ? Quels sont leurs contextes d'utilisation à privilégier ?
+
+Je vous propose de partir à la découverte de ces différents modes de rendu front pour vous aider à choisir le mode le plus adapté à votre contexte, illustrés par des exemples dans l'écosystème React, mais valables sur l'ensemble des écosystèmes front.
+----
+
+==== Notes
+
+jusque 2010: PHP/ASP/... rendu côté server JS a la marge
+depuis 2010: progrès JS, perf coté client (Chrome),
+depuis 2009: NodeJS côté server
+
+- CSR: client side rendering
+
+- MPA multipage app (PHP, JSP, ...):
+inconvénients: manque de fluidité (recharge la page a chaque clique), rendu coté server, compléxité hébergement (charge importante server, sessions à gérer...)
+
+- SPA: single page app
+app JS : HTML généré coté client CSR, update fragement de page, AJAX to API, session côté client
+Dev: de base Vanilla puis React, Angular, Vue.js ...
+intérêts: 
+- exp utilisateur plus fluide, UI plus riche, se rapproche UX client lourd
+- hébergement: serveur moins sollicité
+inconvénients:
+- pénalisant pour le SEO (moteur de recherche)
+- JS désactivé le site ne marche pas
+- temps de chargement au départ long
+- charge côté client
+ - gestion session
+adapté pour une app métier
+pas adapté pour un site web public (référencement)
+
+SSR: Server side rendering
+ressemble à PHP
+mais approche composant
+possibilité d'utiliser JS coté node et coté front
+réhydratation: transformation en SPA après la premiere page
+Dev avec NextJS
+Avantage code HTML référencable facilement (SEO)
+perf initiale rapide
+bonne XP user (comme SPA)
+sécurité
+Complexité de codage: 
+- js coté client
+- réhydratation (page identique coté client/server)
+- compat libraries
+- un peu de charge côté server/complexité hébergement
+
+SSG: Static Site generation
+avec NextJS
+build génère page statique
+SEO top rendu statique
+hébergement simple fiable scalable
+eco conception
+adapté au contenu statique.
+inconvénients: rebuild le site complet si une faute d'ortographe, mix avec client side rendering si une partie dynamic
+ 
+ISR: Incremental static regeneration
+pages générés au build comme SSG
+page peut etre regénéré de manière unitaire
+
+image:xxx
+
+Bénéfices des SPA, SEO ok, performant
+cout beaucoup de JS. 
+Réhydratation peut prendre du tps -> TTI (time to interactive)
+
+Island architecture
+Réhydratation partiel par ilots (uniquement les composants client)
+avec Astro
+moins de JS voir pas de JS
+impact réhydratation réduit
+encore jeune
+pas une SPA
+Cas d'utilisation: Site web satique avec quelques cas dynamic
+
+React server components:
+traitement couteux côté server
+SPA
+Réduction JS coté client
+Réhydratation des composants uniquement des composants clients
+spec jeune: uniquement React pour le moment avec Next.js
+risque de complexité: coté server ? coté client ?
+archi déroutante: avt react coté client maintenant une partie coté server
+
+SPA grosse avancé
+mais trop de JS coté client
+tendance rendu coté server page ou composant mais avec des outils dédié au front
+en fonction des cas d'usage: SSR, SSG, Server components
+
+image:xxx
+
+=== 11H35 - 12h20 (Amphi bleu) : Automatiser ses contrôles de sécurité : Arrêtez de cacher vos failles à côté des monstres sous votre lit !
+
+==== Abstract
+
+.Speakers : 
+--
+*MARINE DU MESNIL (Tehodo)* : Head of Cybersecurity Tribe à Theodo, Marine du Mesnil s’intéresse tout particulièrement à la sécurité informatique et s’implique au sein de la guilde Sécurité de Theodo pour aider les développeurs à créer des produits conformes en les formant et en intervenant dans les différents projets. 
+Elle suit particulièrement les publications de l’OWASP et s’intéresse tout particulièrement au contrôle d’accès, devenu la cause principale de faille sur les sites internets et placé au Top 1 du nouveau Top 10 de l’OWASP.
+Elle cherche à augmenter l'automatisation de la cybersécurité pour la détection des failes et la prévention de leur introduction.
+
+--
+
+----
+Il faut en moyenne 212 jours pour détecter une faille de sécurité ! Et au moins 50% des sites web contiennent une vulnérabilité critique. Vous en faites peut être partie !
+Bien souvent, les failles de sécurité sont comme le monstre qui se cachaient sous notre lit étant enfant. Nous en avons peur sans oser les regarder en face. Un petit test d’intrusion nous rassure pour quelque temps comme les parents nous assurant qu’il n’y a rien. Mais ont-ils bien regardé ? Et les quelques monstres qu’ils ont chassés, sommes nous sûrs qu’ils ne reviendront pas demain ?
+Mon but est de démystifier les failles de sécurité en les considérant comme des défauts dont il faut fixer la cause profonde. Comme un testeur QA (Quality Assurance), l’expert cybersécurité vient vérifier au quotidien l’introduction de failles. Il aide à comprendre la cause de la faille et à mettre en place des moyens de protection en amont grâce à un outil Lean: le QRQC.
+En sortant de ce talk, vous aurez une méthode pour détecter et éradiquer les vulnérabilités sur vos projets grâce à trois axes:
+- Avoir moins peur d’aller voir vos failles de sécurité
+- Comprendre certains d'automatisation de cybersécurité
+- Utiliser un outil Lean pour mieux analyser vos failles et mettre en place des contre-mesures durables
+----
+
+==== Notes
+image:xxx
+
+50% des apps web ont des failles critiques
+- Complexe: car on ne sait pas quoi en faire. 50 CVE par jour en moy sur un an
+- Manque de responsabilité
+- impact non immédiat: ne pas attendre ca va arriver
+OWASP
+outils: 
+- semgrep: analyse du site (facile à lancer)
+- sonarqube: graph -> management visuel -> motiv les équipes
+juice shop: projet web créer par OWASP contenant les vulns
+QRQC: Quick Response (identifier/caractériser pb et corriger rapidement) Quality Control (capitaliser) from Toyota. Connaisance métier/sécu/appli.
+1) explication sur le soucis de sécu + code: pas d'annotation de control d'accès par ex
+2) analyse cause et contre mesure. copier/coller. force PreAuthorize(permitAll()) to at least think about that.
+3) Pourquoi and how to prevent: check by unit test that all controllers are secured (annotated with @PreAuthorize)
+Creates a table report to verify access control on Spring Boot route (or other framework):
+https://github.com/marine-mb/spring-access-inspector/
+Add control to IDE is the most efficient
+Check XSS control
+Renovate/dependabot to check deps
+https://github.com/theodo-group/awesome-security-automation
+Snyk: solution payante
+plein d'outils pour analyser les failles opensource ou pas
+outils dans l'IDE mieux que dans la CI (plus rapide)
+Pourquoi la faille est apparue/Comment s'en prémunir
+Livre: il était une faille
+
+=== 12h35 - 12h50 (151) : Architecture Hexagonale: Comment venir à bout du code spaghetti ?
+
+==== Abstract
+
+.Speakers : 
+--
+*KÉVIN LLOPIS (Carbon IT)* : Technical Officer chez Carbon IT, je suis en charge de la montée en compétences des développeurs 
+sur des sujets qui me tiennent à coeur tels que Spring, OAuth 2.1, OpenID Connect et le Cloud.  
+J'interviens également auprès de clients pour les convaincre des bienfaits des pratiques Clean Code et Secure Coding.
+Le reste de mon temps est partagé entre les challenges techniques et les conférences/articles sur mes sujets de prédilection.
+--
+
+----
+Tout développeur a déjà été confronté à ce sentiment inconfortable de devoir maintenir et faire évoluer du code spaghetti. Mais comment éviter durablement ces écueils ? Voyons ce que peut nous offrir l'architecture hexagonale et dans quelle mesure nous pouvons aider une équipe à la mettre en place, mais surtout à l'entretenir durablement.
+----
+
+==== Notes
+image:xxx
+
+Migration technique from MySQL direct access to Spring Data
+Passer pour une couche d'abstraction (interface)
+isolation métier/données 
+Arch unit
+
+=== 13h - 13h15 (153) : Mais non, c'est pas une erreur de CORS
+
+==== Abstract
+
+.Speakers : 
+--
+*CHRISTOPHE FARGES (onepoint)* : Historique de développeur backend, actuellement tech lead/architecte technique, je m'intéresse surtout au sujets cloud/conteneurisation, à l'optimisation des ressources utilisées par les applications, ainsi qu'au confort du développeur au quotidien.
+--
+
+----
+Lorsqu'une application Web fait une requête vers un backend, il arrive que l'on rencontre le terrifiant message "Cross-Origin Request Blocked"
+On a bien mis "Access-Control-Allow-Origin: *" et on a encore une erreur de CORS ? qu'est ce que c'est que cette histoire ?
+Mais qu'est ce qui se cache derrière ce message ?
+Est-ce réellement l'erreur que l'on rencontre ?
+Nous allons dans cette présentation faire un rappel sur ce mécanisme de sécurité, pourquoi il existe et aussi pourquoi, des fois, ce n'est pas ça l'erreur.
+----
+
+==== Notes
+image:xxx
+
+CORS Cross Origin Resource sharing.
+Pour prévenir un site malveillant d'envoyer une requete vers un autre site.
+Même domaine: ok
+preflight appel options
+Headers:
+- Origin
+- Access-Control-Origin
+- Access-Control-Methods
+- Access-Control-Headers
+- ... -> MDN
+header pas passé car localhost -> ajout localhost comme hostname
+header content-type
+Service appelé responsable de configurer les entêtes CORS
+attention aux intermédaires
+regardez le retour effectif de la requete (F12)
+pensez à tous les endroits d'ou les services sont appelées (localhost y compris)
+utiliser le bon framework qui gère bien les CORS même en cas d'erreur
+
+=== 13h30 - 16h50 (151) : Day of the Dukentacle : la meilleure façon de prévoir le futur, c'est de le fabriquer soi-même
+
+==== Abstract
+
+.Speakers : 
+--
+*JOSÉ PAUMARD (Oracle)* : José est Java Developer Advocate au Java Platform Group chez Oracle. Anciennement maître de conférences à l'Université Sorbonne Paris Nord pendant 25 ans, il est Java Champion, Rockstar JavaOne, speaker régulier dans de nombreuses conférences : Devoxx (France, Belgique, UK), JavaOne, Oracle Code One, DevNexus, JFokus. Il a été consultant en entreprise pendant 25 ans, fortement investi en qualité des applications logicielles et Software Craftsmanship. Il est membre du Paris JUG, co-organisateur du Paris JUG Java Day et de JChateau, une unconference annuelle. Il contribue au site https://dev.java/, tient le JEP Café sur YouTube, et publie également une série de shorts : Cracking the Java Coding Interview.
+
+*REMI FORAX (Université Gustave Eiffel)*: Je suis Maitre de Conférence à l'Université Gustave Eiffel (à Marne la Vallée).
+Je passe la moitié de mon temps à discuter avec des élèves sur les langages de programmation et le reste de mon temps à faire de la recherche sur la langage Java.
+Depuis un peu plus d'une quizaine d'années, je fait partie des gens qui fabrique les spécifications du langage Java, dans mon cas, j'ai travaillé et je continue à travailler sur les lambdas, les modules, les records/sealed-types, le pattern-matching, les value-types.
+Je suis aussi un developpeur Open Source, en plus de l'OpenJDK, je maintiens quelques libraries connues et pas connues.
+--
+
+----
+Alors que Java 21 est à présent derrière nous, il est temps de se tourner vers la prochaine version LTS, qui sera présente dans 18 mois, et disponible en préversion dans à peine plus d'un an. Plusieurs éléments de Java 22 portent en germe ce que seront les principales nouveautés de cette future version. On se propose d'en passer certaines en revue, qui vont faire évoluer le langage et ses API fondamentales, telles qu'Object ou String, et changer la façon dont on écrit du code Java. On parlera de variables sans nom, de classes implicites, de scripts Java, de nouvelles façons d'initialiser les objets, de nouvelles façons de gérer la mémoire explicitement, et bien sûr, de l'interpolation des chaînes de caractères, chantier ouvert il y a plusieurs années déjà. Le futur s'écrit aujourd'hui, pour un langage plus simple, plus logique, et des API plus puissantes et plus performantes.
+----
+
+==== Notes
+
+https://dev.java
+Road to 21: série de vidéos
+Inside java podcast sur Spotify
+
+Unnamed classes JEP 463: code java sans déclarer de classe.
+Unnamed variables JEP 456: variable sans nom.
+
+void main() sans classe possible en preview en 22
+java sans javac possible
+variable de lambda pas utilisé peut être remplacé par _
+Pattern matching: deconstruction de record possible dans les switch (accesseur appelé) -> possibilité d'utiliser les vars non nommées _
+vars non nommées pas utilisable dans les params de méthodes
+Couplage API/Vue
+
+htmx: 
+- lib js pour ne pas écrire de js
+- hx-trigger
+- hx-post/get/delete... hx-vals
+- hx-target + hx-swap
+
+react SSR -> nécessite un Node coté server
+
+image:xxx
+
+API doit coller à la UI. AJAX request/XML response.
+
+String template processor JEP 459: 
+un pr JSON, un pr SQL, ... avec esapce des chars spéciaux (avoid injection)
+need escape char
+implements Component -> fonction render renvoie un Renderer
+implements StringTemplate.Processor (not a string nor a StringTemplate)
+validate fragment
+interpolate values using the correct escaping
+image:xxx
+=> dead
+
+Future:
+validation only once
+interpolation done using validated object (called n times if method called n times)
+
+
+Jusque maintenant constructeur premiere instruction super() (peut être implicite)
+JEP 447: ajouter des instructions avant l'appel à super()
+does not work with canonical records but will be fixed soon
+
+Memory API JEP 454
+Accessing OffHeap Memory
+Dispo en final en 22
+youtube brice duteil ?
+GC:
+- gives memory to create object
+- clean memory when destroy object
+ByteBuffer to read offheap memory -> limited to 2Gb (indexed by an int)
+sun.misc.Unsafe but must not be used
+
+image:xxx
+
+Arena.global()
+arena.allocate() returns MemorySegment 
+segment.setAtIndex to set data in memory
+segment.getAtIndex to get data in memory
+Arena AutoCloseable -< to be used in a try with resources to close arena at the end and free all MemorySegment
+Closeable for Arenas Confined and Shared but not Global and Auto
+Allows to free memory and not rely on GC that may never be called
+
+image:xxx
+
+MemoryLayout.strucLayout() -> must be static final
+POINT_LAYOUT.varHandle(PathElement...)
+VAR_HANDLE.set/get
+offset géré par l'API
+withInvokeExactBehaviour() to enhance perf
+
+=== 17h - 17h30 (Amphi bleu) : Renovate/Dependabot, ou comment reprendre le contrôle sur la mise à jour de ses dépendances
+
+
+==== Abstract
+
+.Speakers : 
+--
+*JEAN-PHILIPPE BACONNAIS (Zenika)* : Développeur @ Zenika Nantes
+Plongé dans le développement avec l'éco-système Java, curieux de nature, j'aime découvrir et expérimenter de nouvelles technos back end ou front end et les partager autour de moi.
+GitLab Heroes 🦊 - Community Hero Gitpod 🍑 - Co orga des Human Talks Nantes
+
+*LISE QUESNEL (Zenika)*: JLise est développeuse web et tech lead. Elle sait être moteur tant sur le plan humain que technique. Les bonnes pratiques de développement sont pour elle le ciment de tout projet. Elle porte également une attention toute particulière à l’expérience utilisateur. Grande curieuse, elle aime découvrir sans cesse de nouvelles choses.
+--
+
+----
+Lorsqu’on développe un projet, on se laisse parfois facilement déborder par les mises à jour de dépendances : c’est rébarbatif, répétitif, bref, pas très fun, et personne n’a envie de le faire. Et si une solution automatique le faisait pour nous ou nous aidait à le faire ? 
+C’est la promesse d’outils comme Dependabot ou Renovate qui vont nous proposer des Pull/Merge-requests avec les montées de versions des dépendances de nos projets. Magique non ? 
+Dans ce talk, après vous avoir (re)présenter ces deux outils, nous vous donnerons des conseils sur la mise en place de Renovate. Notre retour est basé sur nos expériences open source ou lors de notre mission (spoiler, bien sur que tout n’a pas fonctionné du premier coup 😅). Ce sera l’occasion de vous faire une démo pour vous permettre de vous rendre compte de l'intérêt (mais pas que) de ces outils et pourquoi pas de vous décider à en installer un sur vos projets !
+----
+
+==== Notes
+
+image:xxx
+
+mise à jour des deps:
+- réduire faille sécu
+- nouvelles fonctionnalités
+- bugfix/perf
+- +attractif pr le recrutement
+
+MAJ difficile/fastidieux.
+MAJ en cascade.
+
+Dependabot/Renovate: MAJ des deps
+focus dev, gain de tps, plus réactif
+1) scan project (package.json, pom.xml, ...)
+2) verif new versions
+3) Open PR/MR
+
+dependabot.yml
+package-ecosytem
+
+renovate.json
+utiliser l'image docker renovate/renovate
+presets: tempalte de config que l'on peut appliquer à son projet
+on peut créer ses presets
+crée une issue dans gitlab dep dashboard
+
+reco:
+- crée bcp de MR, peut etre limité bonne valeur 5
+- regroupé les MR
+- schedule night 
+- sollicite bcp les runners
+- consomme bcp : trouver la balance entre trop souvent (pas green) et pas assez (risque de trop de change)
+
+automerge si pipeline ok (preset specific) even for prod (à éviter sur les majeurs uniquement mineur et patch)
+
+renovate sur renovate car bcp de maj avec auto maj de la config
+
+=== 17h50 - 18h20 (Amphi bleu) : De Compose à Kubernetes, Same player shoot again
+
+
+==== Abstract
+
+.Speakers : 
+--
+*GUILLAUME LOURS (Docker)* : Staff Software Engineer @Docker working on Docker Compose, Dev Environments and all others environment tools for dev teams
+
+*NICOLAS DE LOOF (Docker)*: Expert en tronçonnage
+--
+
+----
+Kubernetes est le standard _de facto_ dans notre industrie pour orchestrer des applications conteneur-izées en production. Les développeurs apprécient pourtant toujours autant la simplicité et la compacité du modèle proposé par Docker Compose, au moins pendant le développement. Une demande qui revient donc en boucle concerne une traduction auto-magique du compose.yaml en fichiers kube.yaml.
+Cette fonctionnalité a été proposée par de nombreux outils, avec des approches diverses, y compris par Docker avec “Compose on Kubernetes” qui a finalement été déprécié. Nous avons eu une expérience similaire avec les "Cloud Integrations" et le traduction de Compose vers Amazon ECS.
+Dans cette session, nous explorerons notre héritage pour comprendre les raisons de ces échecs, avant de vous présenter la nouvelle génération d'outil "Compose to Kube" sur laquelle nous travaillons, qui veut combiner la simplicité pour un développeur à déployer son application compose.yaml sur k8s, and la flexibilité pour les équipes plateforme de contrôler et d'adapter la conversion pour correspondre aux solutions techniques déployées sur leur cluster.
+----
+
+==== Notes
+
+ Dev aime compose
+ Ops aime kube
+ kompose tool from compose to kube
+
+compose-bridge
+ flexible, adaptable, same local/prod, populaire compose file to kube
+
+utilisation de transformers
+vers kube ou helm
+possibilité de créer son propre transformer éventuellement à partir d'un existant avec --from
+possibilité d'ajotuer dans compose des metadonnées non utilisé par compose mais qui seront utilisé dans les templates kube
+
+image:xxx
+
+== VENDREDI
+
+=== 9h - 9h25 (Amphi bleu) : Comment modéliser l’état du monde en 2100 ? Le Rapport Meadows
+
+==== Abstract
+
+.Speakers : 
+--
+*ANATOLE CHOUARD (Chez Anatole)* : e m’appelle Anatole, j’ai 27 ans et je suis vulgarisateur scientifique ! Pour ça j’ai 2 casquettes : je suis à la fois conférencier et sur YouTube. Après des études en classe préparatoire PC (Physique-Chimie), j’ai étudié les mathématiques appliquées à l’École Polytechnique, puis la modélisation mathématique à la University College de Londres. J’applique maintenant ces enseignements dans ma vulgarisation des sciences !
+--
+
+----
+Comment modéliser l’état du monde en 2100 ? Pas la question la plus simple ! Mais en 1972 un groupe de chercheurs du MIT a essayé de répondre à cette question : c’est le fameux et fascinant rapport Meadows. Et ils ont compris bien des choses avant tout le monde. Dans cette conférence interactive, je vous fais un résumé en 20 minutes de la méthode et surtout des résultats du rapport Meadows !
+----
+
+==== Notes
+
+image:xxx
+croiser les bras... habitudes
+
+Etude The limit to growth (Meadows) fait en 1972 par le club de Rome
+
+1) identifier les systèmes majeurs (5)
+alimentaire, industriel, population, pollution, resources
+
+2) identifier leurs interractions
+population -> naissance (+) / fertilité, décès (-) / espérance de vie
+industriel -> machine (+) / dépréciation (-)
+
+3) Quantifier les interractions
+
+Résultat: polution ++ resources -- population -- resources --
+
+Hypothèses: 
+si + de resources -> ++ de production +++ de pollution
+stabiliser les courbes 70 -> ok pour tout sauf resources
+stabisilier 30 ans plus tard -> compliqué
+
+Conclusion: bcp de questions à approfondir -> énormité de la tâche
+Meadows/Earth4all -> nouvel étude car plus de moyen mais pas mieux que Meadows
+
+Chaine youtube hez Anatole
+
+1, 2, 3 clap
+
+=== 9h35 - 10h (Amphi bleu) : Cybersécurité et cyberdéfense : un sujet géopolitique
+
+==== Abstract
+
+.Speakers : 
+--
+*GUILLAUME POUPARD (Docapost)* : Polytechnicien (X92) et docteur en cryptographie, Guillaume Poupard débute sa carrière en tant que chef du laboratoire de cryptologie de la Direction Centrale de la Sécurité des Systèmes d’Information (DCSSI) qui deviendra, en 2009, l’Agence Nationale de la Sécurité des Systèmes d’Information (ANSSI).
+En 2005, il rejoint le ministère de la Défense où il se spécialisera dans la cyberdéfense, avant d’intégrer en 2010 la Direction Générale de l’Armement (DGA) en tant que responsable des pôles sécurité des systèmes d’information et cyberdéfense. En 2014, il est appelé à prendre la direction générale de l’ANSSI, fonction qu’il occupera jusqu’à fin de l’année 2022.
+En janvier 2023, il rejoint Docaposte en tant que Directeur Général Adjoint en charge notamment des domaines data/IA, cyber et cloud.
+--
+
+----
+La cybersécurité est souvent vue, à juste titre, sous un angle technique, opérationnel et réglementaire. L’incroyable évolution de la menace informatique nous concerne tous, à titre individuel, au niveau des organisations mais également à l’échelle des Etats. Dans un contexte général de fortes tensions géopolitiques, le cyber est devenu un ingrédient majeur dont l’usage se systématise dans des conflits qualifiés « d’hybrides ». Passionnante et effrayante, cette militarisation de l’espace numérique nous concerne toutes et tous !
+----
+
+==== Notes
+
+image:xxx
+
+niveau médiatique -> attaques ciriminelles
+zone de non droit -> ex Crimée
+2019/2020 -> hopitaux attaqués attaquants s'excuse et renvoie les clés
+compliqué pour les PME
+sujet géopolitique: paraliser des systèmes. ex JO.
+Livre blanc (2008) de la défense et de la sécurité nationale.
+Loi: les opérateurs d'importance vitale (énergie, média) doivent se protéger.
+2015 TV5 monde attaqué. Ministre de l'intérieur annonce que c'est par terroriste islamiste. En réalité attaque russe à priori.
+2017 
+- wannacry ransomware. bazare incroyable mal organisé (non récupération des rancons)
+- attaque cyber ukraine par notpetia? Saint Gobain touché 
+conflits moderne accompagné d'attaques cyber.
+
+=== 10h30 - 11h15 (Amphi bleu) : Model Mitosis : ne plus se tromper entre les microservices et le monolithe
+
+==== Abstract
+
+.Speakers : 
+--
+*JULIEN TOPCU (Shodo)*: Julien est un Tech Coach avec 15 ans d'expérience, spécialisé dans le Domain-Driven Design (#DDD). Son expertise réside dans l'aide aux organisations pour construire des systèmes à forte valeur métier. Julien se concentre sur l'alignement de l'organisation, de l'architecture et des pratiques logicielles avec le métier. En tant que membre de la fondation OWASP, il promeut activement les bonnes pratiques en matière de sécurité applicatives. Speaker international, Julien aime partager ses connaissances avec la communauté.
+Fondateur de CraftsRecords, il aide les membres de notre communauté à se lancer dans le monde des conférences.
+
+*JOSIAN CHEVALIER (Shodo)*: Software Crafter à Shodo, spécialisé dans le Domain Driven Design. Je plaide pour une approche rationnelle et durable du développement logiciel, basée sur les besoins métiers.
+--
+
+----
+Tout comme le développement doit être itératif, le design du logiciel doit changer lorsque le contexte et notre compréhension du problème évoluent. Au fur et à mesure qu'un logiciel se développe pour résoudre plus de problèmes, il devient moins souple dans sa capacité à évoluer. Des tensions apparaissent au sein du modèle métier du logiciel qui peine à rester cohérent.
+Finalement, il atteint une masse critique et devient un monolithe de code en spaghetti... Comment pouvons nous déterminer quand il est temps de modulariser notre logiciel ? Comment prendre la décision de le scinder en plusieurs modules ou services ? Comment gérer la différenciation progressive de nos modèles métiers tout en évitant les couplages inutiles ? Il n'est pas facile de découper son logiciel en deux car déterminer les bonnes frontières peut s'avérer être compliqué.
+Découvrez avec nous le Model Mitosis, une approche dynamique utilisée pour diviser un modèle métier en plusieurs modèles qui seront façonnés et découplés de manière itérative. Gagnez en flexibilité afin de mieux déterminer quand diviser votre logiciel en plusieurs services tout en évitant de payer les coût d'échelle des microservices ou bien de devenir un monolithe distribué.
+----
+
+==== Notes
+
+image:xxx
+
+utilisaiton d'un shared kernel + anticorruption layer
+éviter les tensions de modèle
+éviter le sharedkernel -> préféré duplication/spécialisation
+identifié les generic sub domain (money)
+shared kernel: 
+- incertitude entre les 2 domaines
+- purement métier
+- ne devrait pas être partagé
+https://gitlab.com/beyondxscratch/model-mitosis
+
+=== 11h35 - 12h20 (Amphi bleu) : L’architecture micro frontend : comment transformer son site web en puzzle géant collaboratif
+
+==== Abstract
+
+.Speakers : 
+--
+TODO
+--
+
+----
+TODO
+----
+
+==== Notes
+
+image:xxx
+
+Monolith -> split front/back -> split microservices back -> split microfrontent front
+
+Micro-frontend 
+1) iframe
+2) JS
+3) Maillage
+4) Agrégateur
+
+Monorepo (tous les micro front dans le meme repo) ou multi
+soit meme techno soit techno différentes
+
+Adeo/Leroy Merlin
+multirepo: pour favoriser l'indépendance des équipes
+multitechno: 
+Choix d'archi: perf/résilience, SEO, exp personalisé, 
+Migration progressive from monolith
+Developer XP++
+
+Micro front: appli autonome, fragments
+fragment: composant métier responsable d'aller chercher ses donées
+Agrégateur: appel les micro front construit la page final envoyé au user. Gluer, Registry, Shaper (composition), Resolver (url management), Designer (back office pour agir sur les différentes briques)
+Utilisateur -> CDN -> GLUER -> microfront -> micro services
+Perf: appel // des fragemnt
+30 fragment sur la page produit
+Résilience: 2 fragments primaires (produit recommandés pas forcément nécessaire)
+Perf: fragment primaire ok -> stream avant la fin du chargement des autres fragments
+Perf: resources statiques -> resources statiques envoyer le plus rapidement possible. en fonction de la page appelée on connait les fragment à charger. on commencer part les statiques puis on résoud les fragments. on stream les fragments primaires puis les secondaires. (haut de la page rendu rapidement)
+
+Techno
+SSR: Next.JS/Java
+CSR: Web components: attention aux framework et poids -> Svelte
+SPA: difficile d'afficher plusieurs SPA/page -> Vue.js
+Hybrid rendering: hydrater uniquement les parties nécessaire -> Next.JS ou Nux ??
+
+image:xxx
+
+Local dev: surcharge de la conf pour le fragment en cours de dev
+A/B: test 50% version A, 50% version B
+dockerizé, finops (auto scaling), Idling (automatisé l'arret des env le WE économise sous et env)
+Green-IT: 
+- poids des pages plus légère. Moins de data, moins de resource, ...
+- Lazy load fragment: load fragment only when page is scrolled from viewport
+- CPU/API calls -- => moins de container => ancien devices ok
+
+Migration:
+Agrégateur route sur legacy ou microfront
+Pb: différence visuel entre legacy/microfront
+Solution: fragment utilisé dans le legacy pour avoir le même header
+
+Observabilité
+Organisation et gouvernance
+
+image:xxx
+
+800 MEP/mois avt 1 ou 2
+Résilience 99.95% dispo
+
+=== 12h35 - 12h50 (242AB) : String Templates - Syntactic sugar or useful improvement?
+
+==== Abstract
+
+.Speakers : 
+--
+*MICHAEL KRIMGEN (Postcode Loterij)*: I'm a senior Java software developer at the National Postcode Lottery in the Netherlands.
+I love Java programming and good software development practices (like clean coding and simplicity).
+In addition to my job, I am an editor at Baeldung and an author at Reflectoring, both of which I think
+are great ways of keeping my software development skills up to date.
+I love climbing, running, reading, traveling, and learning languages in my free time.
+You can also find me here: https://www.linkedin.com/in/mkrimgen/
+--
+
+----
+Java 21 introduced string templates as a preview feature (https://openjdk.org/jeps/430). String interpolation exists in many other languages and several libraries already offer string interpolation for Java. With Java 21, string templates become part of the language. Is it only syntactic sugar or a useful improvement? In this session, we'll look at the details of the JEP. The talk will cover the reasoning behind the new feature, advantages and disadvantages, and performance impacts. We'll also see how to implement a custom template processor. The session will also include some live coding and a short discussion with the audience on their opinion on the new feature.
+----
+
+==== Notes
+String templates not removed from 23 ?
+
+=== 13h - 13h15 (252AB) : AssertJ comme un pro
+
+==== Abstract
+
+.Speakers : 
+--
+*THOMAS FABRE*: Un Thomas Fabre sauvage apparaît. Grand amateur de musique, lecture ou dessin. Curieux de la première heure, Thomas est multi-passion. Le mieux dans tout ça, c’est qu’il aime bien aller jusqu’au bout des choses, et tout comprendre. Tout, ça veut aussi dire parfois des choses passionnantes que peu de gens osent aller regarder, que l’on parle de Garbage collector ou des paradigmes des langages.
+Et d’ailleurs les langages, Thomas en connait un rayon. Après une formation en autodidacte sur C / C++ au lycée, il n’a eu de cesse de les chercher. Les plus curieux, les plus performants, les nouveaux, les anciens, les shinys et les légendaires ! L’idée et qu’il les captures tous.
+Bien que sa quête de connaissance ne cessera jamais, il commence à se dire qu’après quelques années, il y en a des choses à dire qui peuvent intéresser les gens.
+--
+
+----
+Vous ne connaissez pas AssertJ ? Venez jeter un œil à la plus puissante des bibliothèques d’assertion sur le marché !
+Si vous la connaissez, peut-être ne savez-vous pas tout ce qu’on peut faire avec… 
+Bien souvent cette bibliothèque n’est pas utilisée aussi bien qu’elle pourrait l’être.
+Venez découvrir ou redécouvrir AssertJ pour vous perfectionner dans l’écriture de vos tests !
+----
+
+==== Notes
+
+singleElement()
+extracting("") -> json path, collection, lambda
+SoftAssertions.assertSoftly -> assert all without failing (injectable avec extension JUnit)
+isBefore(), isAfter, isBetween(), isCloseTo()
+satisfies -> avec un Predicate
+Créer ses assertions: extends AbstractAssert, ou AbstractThrowableAssert -> implementer ses méthodes d'assertions
+Refacto ses tests avec les Conditions ou ses propres assertions
+Lire la doc, explorer l'autocompletion
+
+https://medium.com/takima/assertj-comme-un-pro-f2032a002622
+
+=== 13h30 - 14h15 (252AB) : Netty, découvrez LE framework IO pour la JVM
+
+==== Abstract
+
+.Speakers : 
+--
+*STÉPHANE LANDELLE (Gatling)*: Stéphane est un développeur Java et Scala passionné depuis 20 ans.
+Il contribue depuis plus de 10 ans sur des projets open-source, dont Netty, scala-maven-plugin et bien sûr Gatling, la solution de test de charge dont il est le créateur.
+Il est maintenant le CTO de la société Gatling mais apprécie toujours de coder, résoudre des problèmes complexes et optimiser des systèmes et des algorithmes.
+--
+
+----
+Vert.x, Cassandra, Gatling, Twitter, Apple: tous ces logiciels et ces plateformes reconnus pour leurs excellentes performances sous forte charge partagent un point commun.
+Ils reposent sur la même brique essentielle: Netty (https://netty.io/).
+Netty est le framework IO numéro 1 sur la JVM. Cependant, alors qu'il est utilisé partout, il n'est pas très connu auprès du grand public des développeurs et est plutôt perçu comme un framework très bas niveau destiné aux spécialistes.
+L'objectif de cette présentation est de faire découvrir Netty et les différentes stratégies qu'il met en oeuvre pour atteindre de telles performances: allocations, librairies natives, context switching, etc.
+Cette présentation inclue également une démo de comment vous pouvez utiliser Netty pour construire un simple microservice capable d'encaisser des centaines de milliers de requêtes par seconde.
+----
+
+==== Notes
+
+Framewor I/O le plus populaire
+Everywhere: Apple, Facebook, X, Minecraft...
+Web: Spring Webflux, VertX, Micronaut
+Soft: Cassandra, ...
+TCP 
+linux: API server -> socket(), listen(), accept(), read(), write(), close()
+Java: iso. Pb API bloquante thread bloqué (or virtual threads)
+depuis Java 13 plus au dessus l'API Linux pour préparer les virtual threads
+linux: epoll() -> epoll_wait sleep until ready list non empty
+Java NIO (Java 4): wrapper au dessus de epoll (SelectorProvider, ServiceSocketChannel)
+API complexe !!
+Java NIO2 (Java 7): hide complexity put with callback -> callback hell -> not really used
+=> Netty
+.channel() -> tcp/udp/...
+EventLoop
+EventLoopGroup: pool d'EventLoop. Par défaut 2x le nb core sur la machine (attention si k8s cpu_request pris en compte)
+ChannelHandlers: chacun sa reponsabilité TLS, GZIP, Proxy... shipped with Netty. At the end your business handler.
+Pipeline: enchainnement d'handler.
+Future/Promise specific Netty pr retrocompat 6 (API Java apparu en 8 uniquement)
+Threading Model: EventLoop associé à un Channel. Pas besoin de synchronized.
+Traitement bloquant à exécuter dans un autre pool de threads
+java.nio.ByteBuffer: .flip() pr repositionner le curseur. Ne peuve pas grossir.
+HeapByteBuffer:
+??ByteBuffer:
+io.netty.buffer.ByteBuf: java implem of jemalloc 4. for multithread. pool mémoire/thread
+utilise ThreadLocal -> pas compatible avec les virtual threads
+netty-tcnative: to handle TLS. BoringSSL (by Google). les allocations best cipher implem
+Async NameResolver: UDP based and respect TTL (not the case of Java)
+
+Future:
+Support QUIC/HTTP3
+QUIC (Google) protocol to fix TCP issues. Si paquet 1 perdu on ne peut pas traiter paquet 2 paquet 3 en attendant que paquet 1 soit réémis. TCP2 pas possible trop d'impact sur TCP actuel -> QUIC
+HTTP3: HTTP2 over QUIC
+io_uring: 
+Netty 5: Java 11, en stand by
+VirtualThreads: can not be handled due to ThreadLocal
+Competitor Helidon built on top of Virtual Threads
+
+=== 14h35 - 15h20 (252AB) : Créer sa propre VM avec compilation JIT pour les nuls
+
+==== Abstract
+
+.Speakers : 
+--
+*OLIVIER PONCET*: Geek, ex-nerd repenti, je code, je teste, je bricole, je soude et parfois fait sauter les plombs. CTO et spécialiste du magiciel, je suis aussi libriste dans l'âme et très impliqué dans le mouvement des logiciels libres.
+--
+
+----
+La compilation « Just In Time » est une technique d'exécution très utilisée depuis de nombreuses années au sein des machines virtuelles de langages tels que Java, C#, JavaScript, etc .... Elle permet d'interpréter et d'exécuter un byte-code tout en le transformant « à la volée » vers le langage machine natif de la machine hôte nous permettant ainsi d'obtenir des performances bien plus élevées lors d'une seconde exécution du code.
+Ces techniques de recompilation dynamique peuvent être complexes à appréhender lorsque l'on est néophyte sur le sujet, c'est pourquoi nous allons démystifier ensemble ce sujet. Dans ce talk nous mettrons en œuvre et en live notre propre machine virtuelle avec JIT intégrée pour une calculatrice RPN (Reverse Polish Notation), sans aucun framework ni infrastructure de compilation extérieure, en émettant nous même le code machine x86_64 nécessaire à l'exécution.
+Puisse le dieu des « segmentation fault (core dumped) » être avec nous !
+----
+
+==== Notes
+
+JIT: Just in time compiler. Bytecode -> code machine. optimisation à la volée
+1) interpréteur (détection à l'exec)
+2) compilateur AOT (compilation avec exec ex C,C++)
+3) compilateur JIT (compilation vers représentation intermédiaire en bytecode, compulation bytecode en binaire à l'exec)
+4) AOT+JIT: ex Java AOT -> .class JIT .class -> binaire
+
+byte code: instruction sur 1 octet
+pile de byte avec des pseudo instruction: ex pile ou on stock int de 64 bit, les 8 byte suivant contiennent le int, puis opération,...
+ISA: Instruction Set Architecture -> jeu d'instruc du proc
+ABI: Application Binary Interface -> type de données, utilisation des registres, ...
+Convention très différente entre ABI Windows ou Linux sur ISA x86_64
+bytecode premiere fois compilation produit code binaire, fois suivnates exécute le résultat de la permière compil => warmup JVM
+
+https://github.com/ponceto/rpn-calculator-with-jit
+
+=== 15h40 - 16h25 (Amphi bleu) : L'Architecture Hexagonale par la pratique, le live coding qui rendra vos applications plus pérennes
+
+==== Abstract
+
+.Speakers : 
+--
+*JULIEN TOPCU (Shodo)*: Julien est un Tech Coach avec 15 ans d'expérience, spécialisé dans le Domain-Driven Design (#DDD). Son expertise réside dans l'aide aux organisations pour construire des systèmes à forte valeur métier. Julien se concentre sur l'alignement de l'organisation, de l'architecture et des pratiques logicielles avec le métier. En tant que membre de la fondation OWASP, il promeut activement les bonnes pratiques en matière de sécurité applicatives. Speaker international, Julien aime partager ses connaissances avec la communauté.
+Fondateur de CraftsRecords, il aide les membres de notre communauté à se lancer dans le monde des conférences.
+--
+
+----
+Il arrive toujours un moment où, le logiciel est tellement gros et vieux qu’il devient inmaintenable. Impossible de mettre à jour la stack technique sans tout casser, les nouvelles fonctionnalités deviennent de plus en plus longue à implémenter et la dette technique étant tellement lourde que le refactoring devient exorbitant.
+Et si on vous disait que tout ça était plus un problème de pratique qu’un problème de vieillesse du logiciel ?
+Venez découvrir par ce live coding, comment l’Architecture Hexagonale peut tacler la complexité logicielle en vous permettant d’être évolutif et pérenne tout en vous aidant à mieux gérer votre dette technique.
+----
+
+==== Notes
+
+Archi N-Tiers: Controler/Service/Persistence -> logique métier partout (pire dans les proc stoc)
+PB mix @Entity/@JsonProperty: mix JPA/Jackson couplage fort Front/Service/JPA
+Fort couplage métier/tech -> 
+Université: https://www.youtube.com/watch?v=r2XMwAUqZBA
+Archi hexagonale: logique métier au centre sans framework, complexité tech a l'extérieur
+hexagonale: pas vraiment d'explication pour le nom
+domaine == hexagone
+reste extérieur
+Extérieur(Controller, Persistence...) appel le domain avec une API
+
+image:xxx
+
+Abstraction pour appeler une API. interface dans spi
+
+image:xxx
+
+module domain
+module infrastructure
+maven enforcer to not import deps in domain (archunit can be used too)
+
+Controller -> appel API du domain
+Créer une annotation @DomainService dans domain et annoté la classe du domain avec. Puis créer une conf spring pour scanné.
+Créer une annotation @Stub dans le domain pour tester. Permet de déployer le service même si pas complétement fini.
+
+image:xxx
+
+Dans le client de l'API consommé conversion de ce qui renvoyé par l'API en object du domain.
+utilisation de wiremock dans les tests.
+
+image:xxx
